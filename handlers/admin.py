@@ -16,6 +16,21 @@ async def ban(message: types.Message):
     else:
         await message.answer("Пиши в группе!")
 
+async def pin(message: types.Message):
+    if message.from_user.id not in ADMINs:
+        await message.answer("Ты не мой БОСС!")
+    else:
+        if message.reply_to_message:
+            await bot.pin_chat_message(message)
+
+async def game(message: types.Message):
+    if message.from_user.id not in ADMINs:
+        await message.answer("Ты не мой БОСС!")
+    else:
+        await bot.send_dice(message.chat.id, emoji='🎲')
+
+
 def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(ban, commands=['ban'], commands_prefix="!/")
-
+    dp.register_message_handler(pin, commands=['pin'], commands_prefix="!")
+    dp.register_message_handler(game, commands=['game'], commands_prefix="/")

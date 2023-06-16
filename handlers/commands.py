@@ -1,7 +1,7 @@
 from aiogram import types, Dispatcher
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import bot, dp
-from .keyboards import start_markup
+from keyboards import start_markup
 
 
 async def start_command(message: types.Message) -> None:
@@ -38,17 +38,18 @@ async def quiz_1(message: types.Message) -> None:
 
 
 # @dp.message_handler(commands=['mem'])
-async def start_command(message: types.Message):
-    await bot.send_photo(chat_id=message.chat.id, photo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBFI2PTnE5ay-YrWmswhbpBQ2RXZn6MVqzw&usqp=CAU")
+async def photo(message: types.Message):
+    await bot.send_photo(chat_id=message.chat.id,
+            photo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBFI2PTnE5ay-YrWmswhbpBQ2RXZn6MVqzw&usqp=CAU")
 
 #@dp.message_handler()
 async def echo(message: types.Message):
     if type(message) == int:
-        square = message ** 2
-        await bot.send_message(square)
+            square = message ** 2
+            await bot.send_message(square)
     await bot.send_message(message.from_user.id, message.text)
 
 def register_handlers_commands(dp: Dispatcher):
-    dp.register_message_handler(start_command(), commands=['start'])
-    dp.register_message_handler(quiz_1(), commands=['quiz'])
-    dp.register_message_handler(start_command(), commands=['mem'])
+    dp.register_message_handler(start_command, commands=['start'])
+    dp.register_message_handler(quiz_1, commands=['quiz'])
+    dp.register_message_handler(photo, commands=['mem'])
