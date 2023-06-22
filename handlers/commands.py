@@ -1,8 +1,9 @@
 from aiogram import types, Dispatcher
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.dispatcher.filters import Text
 from config import bot, dp
 from keyboards import start_markup
-
+from DataBase.database import sql_command_random
 
 async def start_command(message: types.Message) -> None:
     await bot.send_message(message.chat.id,
@@ -42,6 +43,14 @@ async def photo(message: types.Message):
     await bot.send_photo(chat_id=message.chat.id,
             photo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBFI2PTnE5ay-YrWmswhbpBQ2RXZn6MVqzw&usqp=CAU")
 
+async def get_random_user(message: types.Message) -> None:
+    random_user = await sql_command_random()
+    await message.answer_photo(random_user[-1],
+                                   caption=f"{random_user[3]} {random_user[4]} "
+                                           f"{random_user[5]} {random_user[6]}"
+                                           f"\n\n{random_user[2]}")
+
+
 #@dp.message_handler()
 async def echo(message: types.Message):
     if type(message) == int:
@@ -53,3 +62,6 @@ def register_handlers_commands(dp: Dispatcher):
     dp.register_message_handler(start_command, commands=['start'])
     dp.register_message_handler(quiz_1, commands=['quiz'])
     dp.register_message_handler(photo, commands=['mem'])
+    dp.register_message_handler(get_random_user, Text(equals="get", ignore_case=True))
+
+

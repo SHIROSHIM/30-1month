@@ -3,7 +3,8 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from config import bot
-from keyboards.klient_kb import submit_markup, cancel_markup, duraction_markup
+from keyboards import submit_markup, cancel_markup, duraction_markup
+from DataBase.database import sql_command_insert
 
 
 # FSM - Finite State Machine
@@ -93,3 +94,10 @@ def register_handlers_fsmAdminMentor(dp: Dispatcher):
 
     dp.register_message_handler(submit, state=FSMAdminMentor.submit)
 
+async def submit(message: types.Message, state: FSMContext):
+    if message.text.lower() == 'да':
+        # TODO: Запись в БД
+        await sql_command_insert(state)
+        await state.finish()
+        await message.answer("Записал в БД!")
+    elif message.text.lower() == 'заново':
