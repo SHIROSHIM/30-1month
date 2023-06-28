@@ -1,4 +1,4 @@
-import aioschedule
+import aiscedule
 from aiogram import types, Dispatcher
 from config import bot
 import asyncio
@@ -37,3 +37,4 @@ async def scheduler():
 def register_handlers_notification(dp: Dispatcher):
     dp.register_message_handler(get_chat_id,
                                 lambda word: 'notify' in word.text)
+

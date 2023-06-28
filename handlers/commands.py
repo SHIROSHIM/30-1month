@@ -4,6 +4,8 @@ from aiogram.dispatcher.filters import Text
 from config import bot, dp
 from keyboards import start_markup
 from DataBase.database import sql_command_random
+import parser
+from aiogram.types import ParseMode
 
 async def start_command(message: types.Message) -> None:
     await bot.send_message(message.chat.id,
@@ -58,10 +60,23 @@ async def echo(message: types.Message):
             await bot.send_message(square)
     await bot.send_message(message.from_user.id, message.text)
 
+async def get_news(message: types.Message) -> None:
+    news = parser()
+    for i in news:
+        await message.answer_photo(
+            i['image'],
+            caption=f"<b>{i['time']}</b>\n"
+                    f"<a href='{i['url']}'>{i['title']}</a>\n",
+            reply_markup=InlineKeyboardMarkup().add(
+                InlineKeyboardButton("Смотреть", url=i['url'])
+            ),
+            parse_mode=ParseMode.HTML
+        )
+
+
 def register_handlers_commands(dp: Dispatcher):
     dp.register_message_handler(start_command, commands=['start'])
     dp.register_message_handler(quiz_1, commands=['quiz'])
     dp.register_message_handler(photo, commands=['mem'])
     dp.register_message_handler(get_random_user, Text(equals="get", ignore_case=True))
-
-
+    dp.register_message_handler(get_news, commands=['news'])
