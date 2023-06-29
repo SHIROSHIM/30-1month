@@ -9,7 +9,7 @@ from apscheduler.triggers.date import DateTrigger
 
 
 async def go_to_sleep(text):
-    users = await sql_command_all_ids()
+    users = await sql_command_all()
     for user in users:
         await bot.send_message(
             user[0], f"ИДи спаать {text} !"
