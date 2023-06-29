@@ -1,40 +1,37 @@
-import aiscedule
-from aiogram import types, Dispatcher
-from config import bot
-import asyncio
+import datetime
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from config import ADMINs, bot
+from DataBase.database import sql_command_all
+from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.triggers.date import DateTrigger
 
 
-async def get_chat_id(message: types.Message):
-    global chat_id
-    chat_id = message.from_user.id
-    await message.answer('Ok!')
-
-
-async def go_to_sleep():
-    await bot.send_message(
-        chat_id=chat_id,
-        text="спокойной ночи!"
-    )
+async def go_to_sleep(text):
+    users = await sql_command_all_ids()
+    for user in users:
+        await bot.send_message(
+            user[0], f"ИДи спаать {text} !"
+        )
 
 
 async def wake_up():
-    photo = open('media/good_morning.jpeg', 'rb')
-    await bot.send_photo(
-        chat_id=chat_id,
-        photo=photo
-    )
+    for user in ADMINs:
+        await bot.send_video(
+            chat_id=user,
+            caption=f"Вставай!"
+        )
 
 
-async def scheduler():
-    aioschedule.every().friday.at("23:30").do(go_to_sleep)
-    aioschedule.every().monday("9:30").do(wake_up)
+async def set_scheduler():
+    scheduler = AsyncIOScheduler(timezone="Asia/Bishkek")
 
-    while True:
-        await aioschedule.run_pending()
-        await asyncio.sleep(2)
+    scheduler.add_job(
+        wake_up,
+        target_date = datetime(2023, 7, 10, 0, 0)
+        ),
 
 
-def register_handlers_notification(dp: Dispatcher):
-    dp.register_message_handler(get_chat_id,
-                                lambda word: 'notify' in word.text)
 
+    scheduler.start()
